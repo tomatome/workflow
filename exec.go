@@ -42,6 +42,7 @@ func newCmd(s string, token *UserToken) *Cmd {
 		done:  make(chan bool),
 	}
 	args := strings.Fields(s)
+	//args := append([]string{}, "cmd", s)
 	c.Cmd = exec.Command(args[0], args[1:]...)
 	//c.SysProcAttr = SysProcAttr(token)
 
@@ -54,6 +55,8 @@ func (c *Cmd) init(inFile, outFile, errFile, dir string, env []string) *Cmd {
 	c.errput = errFile
 	c.Dir = dir
 	c.Env = append(c.Env, env...)
+
+	return c
 }
 
 func (c *Cmd) start() (err error) {
@@ -123,10 +126,10 @@ func (c *Cmd) Run() error {
 				//c.kill()
 			case ACT_STOP:
 				//stop
-				//w.c.stop()
+				//c.stop()
 			case ACT_RESUME:
 				//resume
-				//w.c.resume()
+				//c.resume()
 			default:
 				fmt.Println("Unknown action:", act)
 			}

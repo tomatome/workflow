@@ -74,8 +74,6 @@ func NewWorker(wf *WorkFlow) *Worker {
 		Env:   make([]string, 0, 50),
 	}
 
-	//w.env = append(w.env, Env("JH_JOBID", job.jobIdStr))
-
 	return w
 }
 
