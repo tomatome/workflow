@@ -40,7 +40,8 @@ func Test(t *testing.T) {
 		//FailureEnd: true,
 		//ExecFunc:   cmd,
 		DependsOn: []*Worker{w3},
-		Cmd:       "ls -t",
+		Cmd:       "ls -t;",
+		//Output:    "out.txt",
 		//Sync:      true,
 	}
 

@@ -36,11 +36,24 @@ type Cmd struct {
 	Action chan ACT
 }
 
-func newCmd(token *UserToken) *Cmd {
-	return &Cmd{
+func newCmd(s string, token *UserToken) *Cmd {
+	c := &Cmd{
 		Token: token,
 		done:  make(chan bool),
 	}
+	args := strings.Fields(s)
+	c.Cmd = exec.Command(args[0], args[1:]...)
+	//c.SysProcAttr = SysProcAttr(token)
+
+	return c
+}
+
+func (c *Cmd) init(inFile, outFile, errFile, dir string, env []string) *Cmd {
+	c.Input = inFile
+	c.output = outFile
+	c.errput = errFile
+	c.Dir = dir
+	c.Env = append(c.Env, env...)
 }
 
 func (c *Cmd) start() (err error) {
@@ -52,7 +65,7 @@ func (c *Cmd) start() (err error) {
 		c.Stdin = fdin
 	}
 	if c.output != "" {
-		fdout, err := os.Open(c.output)
+		fdout, err := os.OpenFile(c.output, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 		if err != nil {
 			return err
 		}
@@ -61,7 +74,7 @@ func (c *Cmd) start() (err error) {
 		c.Stdout = os.Stdout
 	}
 	if c.errput != "" {
-		fderr, err := os.Open(c.errput)
+		fderr, err := os.OpenFile(c.errput, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 		if err != nil {
 			return err
 		}
@@ -91,12 +104,7 @@ func (c *Cmd) wait() {
 	}(c)
 }
 
-func (c *Cmd) Run(s string, env []string) error {
-	args := strings.Fields(s)
-	c.Cmd = exec.Command(args[0], args[1:]...)
-	//c.SysProcAttr = SysProcAttr(c.Token)
-	c.Env = append(c.Env, env...)
-
+func (c *Cmd) Run() error {
 	fmt.Println("Run cmd:", c.Args)
 	if err := c.start(); err != nil {
 		fmt.Println("Run failed:", err)

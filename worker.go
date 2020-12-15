@@ -58,6 +58,10 @@ type Worker struct {
 	RepeatTimes  int
 	c            *Cmd
 	Cmd          string
+	Input        string
+	Output       string
+	Errput       string
+	Dir          string
 }
 
 func NewWorker(wf *WorkFlow) *Worker {
@@ -85,8 +89,9 @@ func (w *Worker) init(wf *WorkFlow) {
 }
 
 func (w *Worker) RunCmd(c *Context) error {
-	w.c = newCmd(nil)
-	return w.c.Run(w.Cmd, w.Env)
+	w.c = newCmd(w.Cmd, nil)
+	w.c.init(w.Input, w.Output, w.Errput, w.Dir, w.Env)
+	return w.c.Run()
 }
 
 func (w *Worker) workFlowId() string {
