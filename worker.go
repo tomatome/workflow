@@ -43,7 +43,7 @@ const (
 )
 
 type Worker struct {
-	index        int
+	Index        int
 	Name         string
 	wId          string
 	Sync         bool
@@ -67,7 +67,7 @@ type Worker struct {
 func NewWorker(wf *WorkFlow) *Worker {
 	index := wf.len() + 1
 	w := &Worker{
-		index: index,
+		Index: index,
 		wId:   fmt.Sprintf("work-%d-%s", index, time.Now().String()),
 		wf:    wf,
 		state: STATE_PEND,
@@ -78,8 +78,12 @@ func NewWorker(wf *WorkFlow) *Worker {
 }
 
 func (w *Worker) init(wf *WorkFlow) {
-	w.index = wf.len() + 1
-	w.wId = fmt.Sprintf("work-%d-%s", w.index, time.Now().String())
+	w.Index = wf.len() + 1
+	w.DependsOn = make([]*Worker, 0, 5)
+	if wf.len() > 0 {
+		w.DependsOn = append(w.DependsOn, wf.Workers()[wf.len()-1])
+	}
+	w.wId = fmt.Sprintf("work-%d-%s", w.Index, time.Now().String())
 	w.wf = wf
 	w.state = STATE_PEND
 	w.Env = make([]string, 0, 50)
@@ -139,10 +143,10 @@ func (w *Worker) start(wg *sync.WaitGroup) error {
 
 func (w *Worker) run(wg *sync.WaitGroup, fn func() error) error {
 	w.state = STATE_RUN
-	w.wf.phase = w.index
+	w.wf.phase = w.Index
 	if !w.Sync {
 		err := fn()
-		w.wf.err <- Error{w.index, err}
+		w.wf.err <- Error{w.Index, err}
 		wg.Done()
 		return err
 	}
@@ -150,12 +154,12 @@ func (w *Worker) run(wg *sync.WaitGroup, fn func() error) error {
 	go func(w *Worker, wg *sync.WaitGroup) {
 		defer func() {
 			if err := recover(); err != nil {
-				w.wf.err <- Error{w.index, err.(error)}
+				w.wf.err <- Error{w.Index, err.(error)}
 			}
 		}()
 		err := fn()
 		fmt.Println(w.Name, err)
-		w.wf.err <- Error{w.index, err}
+		w.wf.err <- Error{w.Index, err}
 		wg.Done()
 	}(w, wg)
 
