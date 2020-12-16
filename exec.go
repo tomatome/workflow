@@ -86,14 +86,12 @@ func (c *Cmd) start() (err error) {
 		c.Stderr = os.Stdout
 	}
 
-	fmt.Println("Start time:", time.Now())
 	err = c.Start()
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 
-	fmt.Println("Wait start:", time.Now())
 	c.wait()
 
 	return nil
@@ -102,24 +100,18 @@ func (c *Cmd) start() (err error) {
 func (c *Cmd) wait() {
 	go func(c *Cmd) {
 		c.Wait()
-		fmt.Println("Wait end:", time.Now())
 		c.done <- true
 	}(c)
 }
 
 func (c *Cmd) Run() error {
-	fmt.Println("Run cmd:", c.Args)
 	if err := c.start(); err != nil {
-		fmt.Println("Run failed:", err)
 		return err
 	}
-
-	fmt.Println("Check and wait")
 
 	for {
 		select {
 		case act := <-c.Action:
-			fmt.Println("Get action:", ACT(act))
 			switch act {
 			case ACT_KILL:
 				//kill

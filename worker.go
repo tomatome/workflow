@@ -78,8 +78,8 @@ func NewWorker(wf *WorkFlow) *Worker {
 
 func (w *Worker) init(wf *WorkFlow) {
 	w.Index = wf.len() + 1
-	w.DependsOn = make([]*Worker, 0, 5)
-	if wf.len() > 0 {
+	if wf.len() > 0 && w.DependsOn != nil {
+		w.DependsOn = make([]*Worker, 0, 5)
 		w.DependsOn = append(w.DependsOn, wf.Workers()[wf.len()-1])
 	}
 	w.wId = fmt.Sprintf("%s-Work-%d", wf.fId, w.Index)
