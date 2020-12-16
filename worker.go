@@ -82,7 +82,7 @@ func (w *Worker) init(wf *WorkFlow) {
 	if wf.len() > 0 {
 		w.DependsOn = append(w.DependsOn, wf.Workers()[wf.len()-1])
 	}
-	w.wId = fmt.Sprintf("%s-Work-%d", wf.fId, index)
+	w.wId = fmt.Sprintf("%s-Work-%d", wf.fId, w.Index)
 	w.wf = wf
 	w.state = STATE_PEND
 	w.Env = make([]string, 0, 50)
