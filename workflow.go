@@ -35,7 +35,7 @@ func (wf WorkFlow) len() int {
 	return len(wf.ws)
 }
 
-func newWorkFlow(name string) *WorkFlow {
+func NewWorkFlow(name string) *WorkFlow {
 	wf := &WorkFlow{
 		name: name,
 		fId:  "WF-" + time.Now().Format("20060102150405.000"),
