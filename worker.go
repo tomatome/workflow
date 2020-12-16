@@ -4,7 +4,6 @@ package workflow
 import (
 	"fmt"
 	"sync"
-	"time"
 )
 
 type State int
@@ -68,7 +67,7 @@ func NewWorker(wf *WorkFlow) *Worker {
 	index := wf.len() + 1
 	w := &Worker{
 		Index: index,
-		wId:   fmt.Sprintf("%s(work-%d)", wf.fId, index),
+		wId:   fmt.Sprintf("%s-Work-%d", wf.fId, index),
 		wf:    wf,
 		state: STATE_PEND,
 		Env:   make([]string, 0, 50),
@@ -83,7 +82,7 @@ func (w *Worker) init(wf *WorkFlow) {
 	if wf.len() > 0 {
 		w.DependsOn = append(w.DependsOn, wf.Workers()[wf.len()-1])
 	}
-	w.wId = fmt.Sprintf("work-%d-%s", w.Index, time.Now().String())
+	w.wId = fmt.Sprintf("%s-Work-%d", wf.fId, index)
 	w.wf = wf
 	w.state = STATE_PEND
 	w.Env = make([]string, 0, 50)
@@ -98,6 +97,10 @@ func (w *Worker) RunCmd(c *Context) error {
 
 func (w *Worker) workFlowId() string {
 	return w.wf.fId
+}
+
+func (w *Worker) Id() string {
+	return w.wId
 }
 
 func (w *Worker) SetExecFunc(fn func(*Context) error) {

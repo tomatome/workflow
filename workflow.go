@@ -8,13 +8,6 @@ import (
 	"time"
 )
 
-type FlowClient interface {
-	Name() string
-	Len() int
-	Phase() string
-	Start()
-}
-
 type Error struct {
 	index int
 	error
@@ -135,4 +128,8 @@ func (wf *WorkFlow) AddWorker(w *Worker) {
 
 func (wf *WorkFlow) load() {
 
+}
+
+func (wf *WorkFlow) Id() string {
+	return wf.fId
 }
