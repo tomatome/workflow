@@ -68,7 +68,7 @@ func NewWorker(wf *WorkFlow) *Worker {
 	index := wf.len() + 1
 	w := &Worker{
 		Index: index,
-		wId:   fmt.Sprintf("work-%d-%s", index, time.Now().String()),
+		wId:   fmt.Sprintf("%s(work-%d)", wf.fId, index),
 		wf:    wf,
 		state: STATE_PEND,
 		Env:   make([]string, 0, 50),
