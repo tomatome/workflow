@@ -77,7 +77,7 @@ func NewWorker(wf *WorkFlow) *Worker {
 }
 
 func (w *Worker) init(wf *WorkFlow) {
-	w.Index = wf.len() + 1
+	w.Index = wf.len()
 	if wf.len() > 0 && w.DependsOn == nil {
 		w.DependsOn = make([]*Worker, 0, 5)
 		w.DependsOn = append(w.DependsOn, wf.Workers()[wf.len()-1])
